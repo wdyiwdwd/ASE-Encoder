@@ -2,7 +2,7 @@
 #define BOW_ENCODER_H
 
 #include "beginner_tutorials/common_include.h"
-#include "beginner_tutorials/LocalDescriptorEncoder.h"
+#include "beginner_tutorials/DesEncoders/DescriptorEncoder.h"
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <opencv2/highgui/highgui.hpp>  
@@ -11,7 +11,7 @@
 
 namespace enc {
 
-class BoWEncoder : public LocalDescriptorEncoder
+class BoWEncoder : public DescriptorEncoder
 {
 private:
 

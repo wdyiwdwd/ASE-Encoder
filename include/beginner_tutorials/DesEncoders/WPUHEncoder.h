@@ -2,7 +2,7 @@
 #define WPUH_ENCODER_H
 
 #include "beginner_tutorials/common_include.h"
-#include "beginner_tutorials/LocalDescriptorEncoder.h"
+#include "beginner_tutorials/DesEncoders/DescriptorEncoder.h"
 #include "beginner_tutorials/Config.h"
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
@@ -21,7 +21,7 @@ struct ETNode {
 };
 
 
-class WPUHEncoder : public LocalDescriptorEncoder
+class WPUHEncoder : public DescriptorEncoder
 {
 private:
     std::vector<double> maximums;

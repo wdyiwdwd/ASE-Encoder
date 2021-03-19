@@ -2,7 +2,6 @@
 #define POINTCLOUDFILE_H
 
 #include "beginner_tutorials/Config.h"
-#include "beginner_tutorials/LocalDescriptorExtractor.h"
 #include "beginner_tutorials/PlaceRecognizer.h"
 #include <iomanip>
 #include <unistd.h>
@@ -59,7 +58,7 @@ int main(int argc, char **argv)
 
   enc::Config::initialize(configDir + "default.yaml");
 
-  enc::PlaceRecognizer::initialize(enc::ENC_ISE, "./FPFH+ISE.txt");
+  enc::PlaceRecognizer::initialize(enc::EXT_FPFH, enc::ENC_ISE, "./FPFH+ISE.txt");
 
   // char buff[FILENAME_MAX];
   // getcwd( buff, FILENAME_MAX );

@@ -5,16 +5,20 @@ namespace enc {
   PlaceRecognizer::~PlaceRecognizer() {
     pr->outputFileStream.close();
     delete pr->encoder;
+    delete pr->extractor;
     delete pr;
   }
 
-  void PlaceRecognizer::initialize(int encodingType, std::string filename) {
+  void PlaceRecognizer::initialize(int featureType, int encodingType, std::string filename) {
     if (pr != nullptr) return;
-
     pr = new PlaceRecognizer();
-
-    LocalDescriptorExtractor::initialize();
-
+    // LocalDescriptorExtractor::initialize();
+    switch (featureType)
+    {
+    case EXT_FPFH:
+      pr->extractor = new FPFHExtractor();
+      break;
+    }
     switch (encodingType)
     {
     case ENC_ISE:
@@ -25,11 +29,8 @@ namespace enc {
       pr->encoder = new BoWEncoder();
       break;
     }
-
     pr->outputFileStream.open(filename);
-
     pr->scoreFactor = -1;
-
     pr->count = 0;
     pr->encoder->setParametersFromDefaultConfig();
   }
@@ -39,7 +40,7 @@ namespace enc {
     const int trainnum = enc::Config::get<int>("trainset_num");
     pr->trainset_devision.push_back(0);
 
-    std::vector<std::vector<double> > localfeatures = LocalDescriptorExtractor::extract(cloud);
+    std::vector<std::vector<double> > localfeatures = pr->extractor->extract(cloud);
     
     if (pr->count < trainnum) {
       for (int i = 0; i < localfeatures.size(); i++) {
@@ -72,9 +73,7 @@ namespace enc {
     }
 
     pr->positions.push_back(position);
-    
     pr->count++;
-
     std::cout << "count: " << pr->count << std::endl;
     std::cout << "train numbers: " << pr->trainset.size() << std::endl;
     std::cout << "feature numbers: " << pr->features.size() << std::endl;

@@ -38,10 +38,11 @@ catkin_package(
 
 add_library( beginner_tutorials SHARED
     src/Config.cpp
-    src/LocalDescriptorExtractor.cpp
     src/PlaceRecognizer.cpp
-    src/BoWEncoder.cpp
-    src/WPUHEncoder.cpp
+    src/DesExtractors/DescriptorExtractor.cpp
+    src/DesExtractors/FPFHExtractor.cpp
+    src/DesEncoders/BoWEncoder.cpp
+    src/DesEncoders/WPUHEncoder.cpp
 )
 
 add_executable(listener src/listener.cpp)

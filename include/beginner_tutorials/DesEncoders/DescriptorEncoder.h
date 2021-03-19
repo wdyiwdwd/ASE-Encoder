@@ -7,12 +7,12 @@
 
 namespace enc {
 
-class LocalDescriptorEncoder
+class DescriptorEncoder
 {
 protected:
 
 public:
-    LocalDescriptorEncoder() {};
+    DescriptorEncoder() {};
 
     virtual void setParametersFromDefaultConfig() = 0;
 

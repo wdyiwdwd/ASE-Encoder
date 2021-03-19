@@ -1,55 +1,14 @@
-#include "beginner_tutorials/LocalDescriptorExtractor.h"
+#include "beginner_tutorials/DesExtractors/FPFHExtractor.h"
 
 namespace enc {
-  
-void LocalDescriptorExtractor::initialize() {
-  if ( lde == nullptr ){
-      lde = new LocalDescriptorExtractor();
-  }
-}
 
-LocalDescriptorExtractor::~LocalDescriptorExtractor() {
-  delete lde;
-}
+FPFHExtractor::FPFHExtractor() {}
 
-void LocalDescriptorExtractor::downsample(pcl::PointCloud<pcl::PointXYZ>::Ptr cloudIn, pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOut, float voxel_x, float voxel_y, float voxel_z) {
-
-  pcl::VoxelGrid<pcl::PointXYZ> sor;
-  sor.setInputCloud (cloudIn);
-  sor.setLeafSize (voxel_x, voxel_y, voxel_z);
-  sor.filter (*cloudOut);
-  // pcl::ApproximateVoxelGrid<pcl::PointXYZ> approximate_voxel_filter;
-  // approximate_voxel_filter.setLeafSize (voxel_x, voxel_y, voxel_z);
-  // approximate_voxel_filter.setInputCloud (cloudIn);
-  // approximate_voxel_filter.filter (*cloudOut);
-  std::cout << "Filtered cloud contains " << cloudOut->size()
-          << " data points from input_pcd" << std::endl;
-}
-
-void LocalDescriptorExtractor::normalEstimate(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::Normal>::Ptr normals, int K) {
-  pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
-  ne.setInputCloud (cloud);
-  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
-  ne.setSearchMethod (tree);
-  // Use all neighbors in a sphere of radius 3cm
-  ne.setKSearch(K);
-  ne.compute(*normals);
-  std::cout << "Nomals contains " << normals->size()
-          << " and points from input cloud contains " << cloud->size() << std::endl;
-  // cloud_normals->size () should have the same size as the input cloud->size ()*
-}
-
-
-
-std::vector<std::vector<double> > LocalDescriptorExtractor::NARFextract(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-  return std::vector<std::vector<double> >();
-}
-
-std::vector<std::vector<double> > LocalDescriptorExtractor::FPFHextract(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+std::vector<std::vector<double> > FPFHExtractor::extract(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
   pcl::PointCloud<pcl::PointXYZ>::Ptr downsampling_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-  downsample(cloud, downsampling_cloud, 0.3f, 0.3f, 0.3f);
+  DescriptorExtractor::downsample(cloud, downsampling_cloud, 0.3f, 0.3f, 0.3f);
   pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>());
-  normalEstimate(downsampling_cloud, normals, 10);
+  DescriptorExtractor::normalEstimate(downsampling_cloud, normals, 10);
     // Create the FPFH estimation class, and pass the input dataset+normals to it
   pcl::FPFHEstimation<pcl::PointXYZ, pcl::Normal, pcl::FPFHSignature33> fpfh;
   fpfh.setInputCloud (downsampling_cloud);
@@ -124,12 +83,5 @@ std::vector<std::vector<double> > LocalDescriptorExtractor::FPFHextract(pcl::Poi
 
   // return std::vector<std::vector<double> >();
 }
-
-std::vector<std::vector<double> > LocalDescriptorExtractor::extract(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-  return FPFHextract(cloud);
-}
-
-
-LocalDescriptorExtractor* LocalDescriptorExtractor::lde = nullptr;
 
 }

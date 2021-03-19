@@ -1,4 +1,4 @@
-#include "beginner_tutorials/BoWEncoder.h"
+#include "beginner_tutorials/DesEncoders/BoWEncoder.h"
 
 namespace enc {
 
