@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -std=c++11 -pthread -O3 -DNDEBUG  -shared -Wl,-soname,libisepure.so -o ../lib/libisepure.so CMakeFiles/isepure.dir/src/ISEPrepocessor.cpp.o CMakeFiles/isepure.dir/src/ISEUtils.cpp.o CMakeFiles/isepure.dir/src/ISETree.cpp.o CMakeFiles/isepure.dir/src/ISEEncoder.cpp.o 

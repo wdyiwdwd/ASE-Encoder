@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../thirdparty/ThreadPool/include/ThreadPool.h
+vector
+-
+queue
+-
+memory
+-
+thread
+-
+mutex
+-
+condition_variable
+-
+future
+-
+functional
+-
+stdexcept
+-
+
+/home/gys/workspace/ISEPure/thirdparty/ThreadPool/src/ThreadPool.cpp
+ThreadPool.h
+/home/gys/workspace/ISEPure/thirdparty/ThreadPool/src/ThreadPool.h
+
