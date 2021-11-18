@@ -1,5 +1,0 @@
-/home/gys/workspace/ISEPure/build/CMakeFiles/rebuild_cache.dir
-/home/gys/workspace/ISEPure/build/CMakeFiles/isepure.dir
-/home/gys/workspace/ISEPure/build/CMakeFiles/edit_cache.dir
-/home/gys/workspace/ISEPure/build/CMakeFiles/threadpool.dir
-/home/gys/workspace/ISEPure/build/CMakeFiles/Test.dir
