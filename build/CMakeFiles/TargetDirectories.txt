@@ -1,0 +1,5 @@
+/home/gys/workspace/ISEncoder/IS-Encoder/build/CMakeFiles/rebuild_cache.dir
+/home/gys/workspace/ISEncoder/IS-Encoder/build/CMakeFiles/isepure.dir
+/home/gys/workspace/ISEncoder/IS-Encoder/build/CMakeFiles/edit_cache.dir
+/home/gys/workspace/ISEncoder/IS-Encoder/build/CMakeFiles/threadpool.dir
+/home/gys/workspace/ISEncoder/IS-Encoder/build/CMakeFiles/Test.dir
