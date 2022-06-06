@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++11 -pthread -O3 -DNDEBUG  -rdynamic CMakeFiles/Test.dir/test/test.cpp.o  -o ../bin/Test  -Wl,-rpath,/home/gys/workspace/ISEncoder/IS-Encoder/lib ../lib/libisepure.so ../lib/libgmm.so ../lib/libthreadpool.so 

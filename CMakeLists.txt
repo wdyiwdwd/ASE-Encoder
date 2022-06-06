@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
-project(ISEPURE)
+project(ASE)
 
 set(CMAKE_CXX_FLAGS "${CAMKE_CXX_FLAGS} -std=c++11 -pthread")
 set(CMAKE_BUILD_TYPE "RELEASE")
@@ -15,11 +15,15 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/GMM/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/ThreadPool/include)
 
-add_library( isepure SHARED
-   ./src/ISEPrepocessor.cpp
-   ./src/ISEUtils.cpp
-   ./src/ISETree.cpp
-   ./src/ISEEncoder.cpp
+# add_library( ase SHARED
+#    ./src/ISEPrepocessor.cpp
+#    ./src/ISEUtils.cpp
+#    ./src/ISETree.cpp
+#    ./src/ISEEncoder.cpp
+# )
+
+find_library( ase
+   libase.so ${PROJECT_SOURCE_DIR}/lib/
 )
 
 add_library( threadpool SHARED
@@ -30,6 +34,6 @@ find_library( gmm
    libgmm.so ${PROJECT_SOURCE_DIR}/lib/
 )
 
-add_executable(Test ./test/test.cpp)
-target_link_libraries(Test isepure ${gmm} threadpool)
+add_executable(Test ./test/demo.cpp)
+target_link_libraries(Test ${ase} ${gmm} threadpool)
 

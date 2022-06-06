@@ -54,10 +54,12 @@ class ISEEncoder
 public:
   ~ISEEncoder() {
     ISEPrepocessor::Destroy();
+    ISEEncoder::mEncoder = nullptr;
   }
 
   static ISEEncoderPtr GetInstance() {
     if (mEncoder == nullptr) {
+      cout << "Create an ISE encoder!" << endl;
       mEncoder = new ISEEncoder();
     }
     return mEncoder;
