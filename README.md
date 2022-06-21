@@ -2,7 +2,7 @@
 
 ## Introdution
 
-+ This work is an implement for the paper "Adaptive Soft-Encoding: A General Unsupervised Encoding Method for Place Recognition", which is waiting for review in a journal.
++ This work is an implement for the paper "**Adaptive Soft-Encoding: A General Unsupervised Encoding Method for Place Recognition**", which is waiting for review in a journal.
 
 + The adaptive soft-encoding (ASE) is a general unsupervised method, which is an improvement of the soft-encoding[1] to provide it with adaptability. The ASE encodes input sensor data into hierarchical feature vectors, including a training phase and an encoding phase. Different from current encoding methods, the ASE considers the distribution of input data in a subdimensional interval which is divided by analyzing the amount of information in each dimension of training data. Then, the encoded feature vector of the ASE is obtained by combining probability densities of fitted GMMs to reflect to distribution characteristics of input data in different subdimensional intervals.
 
@@ -10,7 +10,7 @@
 
 ## Notice！
 
-+ In order to protect our idea from stealing during the review, we only release a demo which that can be tested and part of source codes. Once the paper is accepted, the complete source files are publicly published.
++ **In order to protect our idea from stealing during the review, we only release a demo which that can be tested and part of source codes. Once the paper is accepted, the complete source files are publicly published.**
 
 ## How to run the demo
 
@@ -35,6 +35,10 @@ In this demo, the ASE encodes the input data into a feature vector, which is a l
 + In this work, a new corridor dataset for place recognition using images or LiDAR data is collected in Nankai University and published online. 311 synchronous frames of images and LiDAR data are collected by a monocular camera and a Velodyne HDL-32 LiDAR installed on a Pioneer3 DX mobile robot moving in an indoor corridor. Each image has 1920 * 1080 pixels and each of LiDAR data has 60000 scan points approximately, of which the maximal range is about 40.0 m.
 + The dataset can be accessed at https://drive.google.com/file/d/1nzscGa1VHEMyFdDGOFSkaeK_FW5U2w4t/view?usp=sharing
 
-<p align="right">By Gong</p>
+<\br>
+<\br>
+<\br>
+<\br>
+<p align="right">**By Gong**</p>
 
 
