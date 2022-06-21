@@ -36,6 +36,9 @@ In this demo, the ASE encodes the input data into a feature vector, which is a l
 + The dataset can be accessed at https://drive.google.com/file/d/1nzscGa1VHEMyFdDGOFSkaeK_FW5U2w4t/view?usp=sharing
 
 <br />
+
+*[1] H. Gao, X. Zhang, J. Yuan, J. Song, and Y. Fang, “A novel global localization approach based on structural unit encoding and multiple hypothesis tracking,” IEEE Transactions on Instrumentation and Measurement, vol. 68, no. 11, pp. 4427–4442, 2019.*
+
 <br />
 <br />
 <br />
