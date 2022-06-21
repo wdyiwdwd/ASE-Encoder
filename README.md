@@ -4,7 +4,7 @@
 
 + This work is an implement for the paper "**Adaptive Soft-Encoding: A General Unsupervised Encoding Method for Place Recognition**", which is waiting for review in a journal.
 
-+ The adaptive soft-encoding (ASE) is a general unsupervised method, which is an improvement of the soft-encoding[1] to provide it with adaptability. The ASE encodes input sensor data into hierarchical feature vectors, including a training phase and an encoding phase. Different from current encoding methods, the ASE considers the distribution of input data in a subdimensional interval which is divided by analyzing the amount of information in each dimension of training data. Then, the encoded feature vector of the ASE is obtained by combining probability densities of fitted GMMs to reflect to distribution characteristics of input data in different subdimensional intervals.
++ The adaptive soft-encoding (ASE) is a general unsupervised method, which is an improvement of the soft-encoding[1][2] to provide it with adaptability. The ASE encodes input sensor data into hierarchical feature vectors, including a training phase and an encoding phase. Different from current encoding methods, the ASE considers the distribution of input data in a subdimensional interval which is divided by analyzing the amount of information in each dimension of training data. Then, the encoded feature vector of the ASE is obtained by combining probability densities of fitted GMMs to reflect to distribution characteristics of input data in different subdimensional intervals.
 
 + The ASE has some advantages. First, encoding results of the ASE have high distinguishability. Second, the ASE is adaptive to input data with any types and dimensions. Therefore, the ASE-based place recognition method can work well for different local descriptors from data obtained by different sensors, e.g. SIFTs and ORBs from images, SRDs and 3D SUs from LiDAR data. Third, the ASE only needs a small amount of training data and can quickly generate an effective data representation model without need of GPU acceleration, which means the ASE can be applied for online navigation of autonomous vehicles and mobile robots. Fourth, as a generic encoding method, the ASE is also suitable for global localization of vehicles and loop closure detection in SLAM.
 
@@ -37,7 +37,9 @@ In this demo, the ASE encodes the input data into a feature vector, which is a l
 
 <br />
 
-*[1] H. Gao, X. Zhang, J. Yuan, J. Song, and Y. Fang, “A novel global localization approach based on structural unit encoding and multiple hypothesis tracking,” IEEE Transactions on Instrumentation and Measurement, vol. 68, no. 11, pp. 4427–4442, 2019.*
+[1] *H. Gao, X. Zhang, J. Yuan, J. Song, and Y. Fang, “A novel global localization approach based on structural unit encoding and multiple hypothesis tracking,” IEEE Transactions on Instrumentation and Measurement, vol. 68, no. 11, pp. 4427–4442, 2019.*
+
+[2] *G. Zhou, J. Yuan, H. Gao, Q. Sun, X. Zhang, and S. Yu, “The 3d lidar point cloud descriptor based on structural unit soft-encoding in structured environment,” Robot, vol. 42, pp. 641–650, 11 2020.*
 
 <br />
 <br />
