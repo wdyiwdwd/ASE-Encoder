@@ -15,16 +15,16 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/GMM/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/ThreadPool/include)
 
-# add_library( ase SHARED
-#    ./src/ISEPrepocessor.cpp
-#    ./src/ISEUtils.cpp
-#    ./src/ISETree.cpp
-#    ./src/ISEEncoder.cpp
-# )
-
-find_library( ase
-   libase.so ${PROJECT_SOURCE_DIR}/lib/
+add_library( ase SHARED
+   ./src/ISEPrepocessor.cpp
+   ./src/ISEUtils.cpp
+   ./src/ISETree.cpp
+   ./src/ISEEncoder.cpp
 )
+
+# find_library( ase
+#    libase.so ${PROJECT_SOURCE_DIR}/lib/
+# )
 
 add_library( threadpool SHARED
    ./thirdparty/ThreadPool/src/ThreadPool.cpp
@@ -35,5 +35,5 @@ find_library( gmm
 )
 
 add_executable(Test ./test/demo.cpp)
-target_link_libraries(Test ${ase} ${gmm} threadpool)
+target_link_libraries(Test ase ${gmm} threadpool)
 
