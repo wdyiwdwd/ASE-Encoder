@@ -39,23 +39,23 @@ In this demo, the ASE encodes the input data into a feature vector, which is a l
 
 + Visualization
 
-    ![Flow_chart](imgs/data.jpg)
+    ![Data](imgs/data.jpg)
 
 ## Results
 
 - Precision-recall evaluation
 
-    ![Flow_chart](imgs/img.png)
+    ![img_pr_curve](imgs/img.png)
 
-    ![Flow_chart](imgs/lidars.png)
+    ![lidar_pr_curve](imgs/lidars.png)
 
 - Visualization results
 
-    ![Flow_chart](imgs/vis.png)
+    ![vis](imgs/vis.png)
 
 - Runtime
 
-    ![Flow_chart](imgs/time.png)
+    ![time](imgs/time.png)
 
 <br />
 
