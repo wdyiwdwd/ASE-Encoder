@@ -1,8 +1,8 @@
-#include "ISEEncoder.h"
+#include "ASEEncoder.h"
 
-ISE_NAMESPACE_START
+ASE_NAMESPACE_START
 
-double ISEEncoder::GetQuantityOfInformationByLevel(int level) {
+double ASEEncoder::GetQuantityOfInformationByLevel(int level) {
   if (level <= 1) {
     return 0;
   }
@@ -13,8 +13,8 @@ double ISEEncoder::GetQuantityOfInformationByLevel(int level) {
   return sumOfImportances;
 }
 
-ISEFeatureSegmentStarts ISEEncoder::DivideFeatureSegmentsByImportances(ISEFeatureImportances& featureImportances) {
-  ISEFeatureSegmentStarts segmentStarts(mParam.mCombination, 0);
+ASEFeatureSegmentStarts ASEEncoder::DivideFeatureSegmentsByImportances(ASEFeatureImportances& featureImportances) {
+  ASEFeatureSegmentStarts segmentStarts(mParam.mCombination, 0);
   if (featureImportances.size() <= mParam.mCombination) {
     for (auto count = 0; count < featureImportances.size(); count++) {
       segmentStarts[count] = count;
@@ -42,7 +42,7 @@ ISEFeatureSegmentStarts ISEEncoder::DivideFeatureSegmentsByImportances(ISEFeatur
   return segmentStarts;
 }
 
-int ISEEncoder::GetOptimalGMMNumberByRedundantKernels(ISEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
+int ASEEncoder::GetOptimalGMMNumberByRedundantKernels(ASEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
   if (featureSet.size() == 0) {
     return 0;
   }
@@ -74,7 +74,7 @@ int ISEEncoder::GetOptimalGMMNumberByRedundantKernels(ISEFeatureSet& featureSet,
     }
     lastLogLikelihood = logLikelihood;
   }
-  vector<ISEGMMWeight> weights(redundantKernelNumber, 0);
+  vector<ASEGMMWeight> weights(redundantKernelNumber, 0);
   for (auto i = 0; i < weights.size(); i++) {
     weights[i] = gmm.weight[i];
   }
@@ -92,7 +92,7 @@ int ISEEncoder::GetOptimalGMMNumberByRedundantKernels(ISEFeatureSet& featureSet,
   return kernelNum;
 }
 
-int ISEEncoder::GetOptimalGMMNumberByBIC(ISEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
+int ASEEncoder::GetOptimalGMMNumberByBIC(ASEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
   if (featureSet.size() == 0) {
     return 0;
   }
@@ -103,7 +103,7 @@ int ISEEncoder::GetOptimalGMMNumberByBIC(ISEFeatureSet& featureSet, int segmentS
 
   int featureDimension = segmentEnd - segmentStart;
   int maxIterations = 300;
-  double minBIC = ISE_MAX_DOUBLE;
+  double minBIC = ASE_MAX_DOUBLE;
   for (auto numOfCluster = 2; numOfCluster <= ceil(pow(mParam.mMaxDimention, 1.0 / mParam.mCombination)); numOfCluster+=1) {
     string typeGMM = "diagonal";
     Gaussian_Mixture_Model gmm(typeGMM, featureDimension, numOfCluster);
@@ -139,9 +139,9 @@ int ISEEncoder::GetOptimalGMMNumberByBIC(ISEFeatureSet& featureSet, int segmentS
   return tGMMNumber;
 }
 
-void ISEEncoder::FitGMMByFeatureSegmentSet(ISEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
-  double minBIC = ISE_MAX_DOUBLE;
-  ISEGMMClusters gmmResults;
+void ASEEncoder::FitGMMByFeatureSegmentSet(ASEFeatureSet& featureSet, int segmentStart, int segmentEnd) {
+  double minBIC = ASE_MAX_DOUBLE;
+  ASEGMMClusters gmmResults;
   gmmResults.mFeatureDimension = segmentEnd - segmentStart;
   int numOfCluster = GetOptimalGMMNumberByBIC(featureSet, segmentStart, segmentEnd);
   int featureDimension = segmentEnd - segmentStart;
@@ -201,16 +201,16 @@ void ISEEncoder::FitGMMByFeatureSegmentSet(ISEFeatureSet& featureSet, int segmen
   // cout << *mTree << endl << endl;
 }
 
-void ISEEncoder::Train(ISEFeatureSet& featureSet) {
-  mPrepoc = ISEPrepocessor::GetInstance();
+void ASEEncoder::Train(ASEFeatureSet& featureSet) {
+  mPrepoc = ASEPrepocessor::GetInstance();
   mFeatureImportances = mPrepoc->TrainPrepocessing(featureSet);
-  ISEFeatureSegmentStarts segmentStart = DivideFeatureSegmentsByImportances(mFeatureImportances);
-  ISEThreadReturnVector threadReturn;
-  mThreads = ISEThreadPool::GetInstance(mParam.mThread.mThreadNumber);
+  ASEFeatureSegmentStarts segmentStart = DivideFeatureSegmentsByImportances(mFeatureImportances);
+  ASEThreadReturnVector threadReturn;
+  mThreads = ASEThreadPool::GetInstance(mParam.mThread.mThreadNumber);
   for (auto i = 0; i < segmentStart.size(); i++) {
     // fgetc(stdin);
     if (mParam.mThread.mThreadNumber) {
-      threadReturn.emplace_back(mThreads->Enqueue(&ISEEncoder::FitGMMByFeatureSegmentSet, this, ISE_REF(featureSet), segmentStart[i], (i + 1 < segmentStart.size()) ? segmentStart[i + 1] : featureSet[0].size()));
+      threadReturn.emplace_back(mThreads->Enqueue(&ASEEncoder::FitGMMByFeatureSegmentSet, this, ASE_REF(featureSet), segmentStart[i], (i + 1 < segmentStart.size()) ? segmentStart[i + 1] : featureSet[0].size()));
     }
     else {
       FitGMMByFeatureSegmentSet(featureSet, segmentStart[i], (i + 1 < segmentStart.size()) ? segmentStart[i + 1] : featureSet[0].size());
@@ -223,15 +223,15 @@ void ISEEncoder::Train(ISEFeatureSet& featureSet) {
   if (mParam.mThread.mIsMultiThread) {
     mTree->ReserveSpaceForMultiThread(mParam.mThread.mThreadNumber);
   }
-  mTree->SetPurningParam(mParam.mPattern.mEncodingPattern == ISEEncodingPattern::ISE_ENCODING_EFFICIENT, mParam.mPattern.mPruningRate);
+  mTree->SetPurningParam(mParam.mPattern.mEncodingPattern == ASEEncodingPattern::ASE_ENCODING_EFFICIENT, mParam.mPattern.mPruningRate);
 }
 
-ISEDescriptor ISEEncoder::Encode(ISEFeatureSet& featureSet) {
-  if (!mIsTrained) return ISEDescriptor();
-  mPrepoc = ISEPrepocessor::GetInstance();
+ASEDescriptor ASEEncoder::Encode(ASEFeatureSet& featureSet) {
+  if (!mIsTrained) return ASEDescriptor();
+  mPrepoc = ASEPrepocessor::GetInstance();
   mPrepoc->Prepocessing(featureSet);
 
-  auto feedbackKernel =  [](ISEFeatureSegment& segment, ISETreeNodeData& data) -> double {
+  auto feedbackKernel =  [](ASEFeatureSegment& segment, ASETreeNodeData& data) -> double {
     double result = 0;
     double* featureSegment = segment.data();
     double* featureMean = data.mMeans.data();
@@ -252,8 +252,8 @@ ISEDescriptor ISEEncoder::Encode(ISEFeatureSet& featureSet) {
     mTree->UpdateTreeNodeWeights(featureSet, feedbackKernel);
   }
 
-  //  ISEDescriptor des = mTree->GetDescriptorFromTree(mTree->GetTreeLevel());
-  ISEDescriptor des = mTree->GetDescriptorFromTree(mTree->GetTreeLevel() - 1);
+  //  ASEDescriptor des = mTree->GetDescriptorFromTree(mTree->GetTreeLevel());
+  ASEDescriptor des = mTree->GetDescriptorFromTree(mTree->GetTreeLevel() - 1);
   mTree->ResetWeightsOfTree();
 
   // power normalization
@@ -273,6 +273,6 @@ ISEDescriptor ISEEncoder::Encode(ISEFeatureSet& featureSet) {
   return des;
 }
 
-ISEEncoderPtr ISEEncoder::mEncoder = nullptr;
+ASEEncoderPtr ASEEncoder::mEncoder = nullptr;
 
-ISE_NAMESPACE_END
+ASE_NAMESPACE_END

@@ -1,8 +1,8 @@
-#include "ISEUtils.h"
+#include "ASEUtils.h"
 
-ISE_NAMESPACE_START
+ASE_NAMESPACE_START
 
-double ISEUtils::EuclideanDistance(const ISEDescriptor& des1, const ISEDescriptor& des2) {
+double ASEUtils::EuclideanDistance(const ASEDescriptor& des1, const ASEDescriptor& des2) {
   if (des1.size() == 0 || des1.size() != des2.size()) {
     cout << "EuclideanDistance: descriptor is invalid!" << endl;
     return 0;
@@ -14,7 +14,7 @@ double ISEUtils::EuclideanDistance(const ISEDescriptor& des1, const ISEDescripto
   return sqrt(dist);
 }
 
-void ISEUtils::CoutDescriptor(string name, const ISEDescriptor& des) {
+void ASEUtils::CoutDescriptor(string name, const ASEDescriptor& des) {
   cout << name << ": " << endl;
   for (auto i = 0; i < des.size(); i++) {
     cout << des[i] << " ";
@@ -22,4 +22,4 @@ void ISEUtils::CoutDescriptor(string name, const ISEDescriptor& des) {
   cout << endl << endl;
 }
 
-ISE_NAMESPACE_END
+ASE_NAMESPACE_END

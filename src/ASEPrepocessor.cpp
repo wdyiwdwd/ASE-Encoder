@@ -1,17 +1,17 @@
-#include "ISEPrerequisite.h"
-#include "ISEPrepocessor.h"
+#include "ASEPrerequisite.h"
+#include "ASEPrepocessor.h"
 
-ISE_NAMESPACE_START
+ASE_NAMESPACE_START
 
-void ISEPrepocessor::TrainMaxMinScalingParam(ISEFeatureSet& trainset) {
+void ASEPrepocessor::TrainMaxMinScalingParam(ASEFeatureSet& trainset) {
   if (trainset.size() == 0) {
     cout << "TrainMaxMinScalingParam: traintrainset is empty!" << endl;
     return;
   }
 
 
-  mMax.resize(trainset[0].size(), ISE_MIN_DOUBLE);
-  mMin.resize(trainset[0].size(), ISE_MAX_DOUBLE);
+  mMax.resize(trainset[0].size(), ASE_MIN_DOUBLE);
+  mMin.resize(trainset[0].size(), ASE_MAX_DOUBLE);
 
   for (auto i = 0; i < trainset.size(); i++) {
     for (auto j = 0; j < trainset[i].size(); j++) {
@@ -26,7 +26,7 @@ void ISEPrepocessor::TrainMaxMinScalingParam(ISEFeatureSet& trainset) {
 
 }
 
-void ISEPrepocessor::MaxMinScaling(ISEFeatureSet& features) {
+void ASEPrepocessor::MaxMinScaling(ASEFeatureSet& features) {
   if (features.size() == 0) {
     cout << "MaxMinScaling: feature set is empty!" << endl;
     return;
@@ -56,7 +56,7 @@ void ISEPrepocessor::MaxMinScaling(ISEFeatureSet& features) {
   // }
 }
 
-void ISEPrepocessor::TrainZScoreScalingParam(ISEFeatureSet& trainset) {
+void ASEPrepocessor::TrainZScoreScalingParam(ASEFeatureSet& trainset) {
   if (trainset.size() == 0) {
     cout << "TrainZScoreScalingParam: traintrainset is empty!" << endl;
     return;
@@ -86,7 +86,7 @@ void ISEPrepocessor::TrainZScoreScalingParam(ISEFeatureSet& trainset) {
   }
 }
 
-void ISEPrepocessor::ZScoreScaling(ISEFeatureSet& features) {
+void ASEPrepocessor::ZScoreScaling(ASEFeatureSet& features) {
   if (features.size() == 0) {
     cout << "ZScoreScaling: feature set is empty!" << endl;
     return;
@@ -112,27 +112,27 @@ void ISEPrepocessor::ZScoreScaling(ISEFeatureSet& features) {
 
 }
 
-ISEFeatureImportances ISEPrepocessor::TrainOrthogonalingMatrix(ISEFeatureSet& trainset) {
+ASEFeatureImportances ASEPrepocessor::TrainOrthogonalingMatrix(ASEFeatureSet& trainset) {
   if (trainset.size() == 0) {
     cout << "TrainOrthogonalingMatrix: trainset is empty!" << endl;
-    return move(ISEFeatureImportances());
+    return move(ASEFeatureImportances());
   }
 
   // constexpr double dimensionReductionRadio = 0.87;
   constexpr double dimensionReductionRadio = 0.87;
 
-  ISEFeatureMatrix trainMatrix(trainset[0].size(), trainset.size());
+  ASEFeatureMatrix trainMatrix(trainset[0].size(), trainset.size());
   for (auto i = 0; i < trainset.size(); i++) {
     for (auto j = 0; j < trainset[0].size(); j++) {
       trainMatrix(j, i) = trainset[i][j];
     }
   }
 
-  auto convMatrix = (1.0d / trainset.size()) * trainMatrix * trainMatrix.transpose();
+  auto convMatrix = (1.0f / trainset.size()) * trainMatrix * trainMatrix.transpose();
 
 
   // the eigen values are sorted from small to large
-  ISEEigenSolver eigenSolver(convMatrix);
+  ASEEigenSolver eigenSolver(convMatrix);
   auto eigenValues = eigenSolver.eigenvalues();
   auto eigenVectors = eigenSolver.eigenvectors();
 
@@ -152,7 +152,7 @@ ISEFeatureImportances ISEPrepocessor::TrainOrthogonalingMatrix(ISEFeatureSet& tr
   for (auto i = 0; i < reverseEigenValues.rows(); i++) {
     eigenValueSum += reverseEigenValues(i);
   }
-  ISEFeatureImportances importances;
+  ASEFeatureImportances importances;
   double eigenValueTempSum = 0;
   for (auto i = 0; i < reverseEigenValues.rows(); i++) {
     importances.push_back(reverseEigenValues(i) / eigenValueSum);
@@ -165,9 +165,9 @@ ISEFeatureImportances ISEPrepocessor::TrainOrthogonalingMatrix(ISEFeatureSet& tr
   mEigenVectors = reverseEigenVectors.block(0, 0, reverseEigenVectors.rows(), importances.size());
 
   return importances;
-} 
+}
 
-void ISEPrepocessor::Orthogonaling(ISEFeatureSet& features) {
+void ASEPrepocessor::Orthogonaling(ASEFeatureSet& features) {
   if (features.size() == 0) {
     cout << "Orthogonaling: feature set is empty!" << endl;
     return;
@@ -178,7 +178,7 @@ void ISEPrepocessor::Orthogonaling(ISEFeatureSet& features) {
     return;
   }
 
-  ISEFeatureMatrix trainMatrix(features[0].size(), features.size());
+  ASEFeatureMatrix trainMatrix(features[0].size(), features.size());
   for (auto i = 0; i < features.size(); i++) {
     for (auto j = 0; j < features[0].size(); j++) {
       trainMatrix(j, i) = features[i][j];
@@ -188,7 +188,7 @@ void ISEPrepocessor::Orthogonaling(ISEFeatureSet& features) {
   trainMatrix =  (mEigenVectors.transpose() * trainMatrix);
 
 
-  ISEFeatureSet orthogonalingFeatures(features.size(), ISEFeature(mFeatureDimention, 0));
+  ASEFeatureSet orthogonalingFeatures(features.size(), ASEFeature(mFeatureDimention, 0));
 
   for (auto i = 0; i < orthogonalingFeatures.size(); i++) {
     for (auto j = 0; j < orthogonalingFeatures[0].size(); j++) {
@@ -197,25 +197,25 @@ void ISEPrepocessor::Orthogonaling(ISEFeatureSet& features) {
   }
 
   features = orthogonalingFeatures;
-} 
+}
 
-ISEFeatureImportances ISEPrepocessor::TrainPrepocessing(ISEFeatureSet& trainset) {
+ASEFeatureImportances ASEPrepocessor::TrainPrepocessing(ASEFeatureSet& trainset) {
   TrainZScoreScalingParam(trainset);
   ZScoreScaling(trainset);
   // TrainMaxMinScalingParam(trainset);
   // MaxMinScaling(trainset);
-  ISEFeatureImportances importances = TrainOrthogonalingMatrix(trainset);
+  ASEFeatureImportances importances = TrainOrthogonalingMatrix(trainset);
   Orthogonaling(trainset);
   return importances;
 }
 
-void ISEPrepocessor::Prepocessing(ISEFeatureSet& features) {
+void ASEPrepocessor::Prepocessing(ASEFeatureSet& features) {
   ZScoreScaling(features);
   // MaxMinScaling(features);
   Orthogonaling(features);
 }
 
 
-ISEPrepocessorPtr ISEPrepocessor::mPocessor = nullptr;
+ASEPrepocessorPtr ASEPrepocessor::mPocessor = nullptr;
 
-ISE_NAMESPACE_END
+ASE_NAMESPACE_END

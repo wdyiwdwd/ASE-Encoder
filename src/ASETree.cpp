@@ -1,13 +1,13 @@
-#include "ISETree.h"
+#include "ASETree.h"
 
-ISE_NAMESPACE_START
+ASE_NAMESPACE_START
 
-ostream& operator << (ostream& out, ISETreeNode& treeNode) {
-  out << "||" << treeNode.mData.mDimension << " " << treeNode.mWeight << "|| "; 
+ostream& operator << (ostream& out, ASETreeNode& treeNode) {
+  out << "||" << treeNode.mData.mDimension << " " << treeNode.mWeight << "|| ";
   return out;
 }
 
-ostream& operator << (ostream& out, ISETree& tree) {
+ostream& operator << (ostream& out, ASETree& tree) {
   for (auto i = 0; i < tree.mHeads.size(); i++) {
     auto nodePtr = tree.mHeads[i];
     int count = 0;
@@ -25,9 +25,9 @@ ostream& operator << (ostream& out, ISETree& tree) {
 }
 
 
-ISETreeNode::ISETreeNode(int level, int order, int subNum, ISETreeNodeType nodeType) : mNodeLevel(level), mNodeOrder(order), mSubNum(subNum), mNodeType(nodeType), mWeight(0), mTempWeight(0), mNext(nullptr), mParent(nullptr) {}
+ASETreeNode::ASETreeNode(int level, int order, int subNum, ASETreeNodeType nodeType) : mNodeLevel(level), mNodeOrder(order), mSubNum(subNum), mNodeType(nodeType), mWeight(0), mTempWeight(0), mNext(nullptr), mParent(nullptr) {}
 
-ISETreeNode::ISETreeNode(const ISETreeNode& node) {
+ASETreeNode::ASETreeNode(const ASETreeNode& node) {
   mNodeLevel = node.mNodeLevel;
   mSubNum = node.mSubNum;
   mNodeOrder = node.mNodeOrder;
@@ -39,7 +39,7 @@ ISETreeNode::ISETreeNode(const ISETreeNode& node) {
   mThreadWeights = node.mThreadWeights;
 }
 
-void ISETreeNode::AddChildren(ISETreeNodePtr treeNode) {
+void ASETreeNode::AddChildren(ASETreeNodePtr treeNode) {
     // if (mChildren.size() > 0) {
     //   mChildren[mChildren.size() - 1]->AddNextBrother(treeNode);
     // }
@@ -47,22 +47,22 @@ void ISETreeNode::AddChildren(ISETreeNodePtr treeNode) {
     treeNode->mParent = this;
 }
 
-void ISETreeNode::ComputeWeightsForMultiThread() {
-  if (mNodeType == ISETreeNodeType::ISE_TREENODE_TYPE_ROOT) return;
+void ASETreeNode::ComputeWeightsForMultiThread() {
+  if (mNodeType == ASETreeNodeType::ASE_TREENODE_TYPE_ROOT) return;
   mWeight = 0;
   for (auto i = 0; i < mThreadWeights.size(); i++) {
     mWeight += mThreadWeights[i];
   }
-  mThreadWeights = ISETreeNodeWeightsForMultiThread(mThreadWeights.size(), 0);
-  mThreadTempWeights = ISETreeNodeTempWeightsForMultiThread(mThreadWeights.size(), 0);
+  mThreadWeights = ASETreeNodeWeightsForMultiThread(mThreadWeights.size(), 0);
+  mThreadTempWeights = ASETreeNodeTempWeightsForMultiThread(mThreadWeights.size(), 0);
 }
 
-// for ISE_Tree
+// for ASE_Tree
 
-ISETree::ISETree() : mTreeLevel(1) {
-  mRoot = new ISETreeNode(0, 0, 1, ISETreeNodeType::ISE_TREENODE_TYPE_ROOT);
-  mRoot->SetWeight(1.0d);
-  mRoot->SetTempWeight(1.0d);
+ASETree::ASETree() : mTreeLevel(1) {
+  mRoot = new ASETreeNode(0, 0, 1, ASETreeNodeType::ASE_TREENODE_TYPE_ROOT);
+  mRoot->SetWeight(1.0f);
+  mRoot->SetTempWeight(1.0f);
   mHeads.push_back(mRoot);
   mLevelSubNums.push_back(1);
   mLevelNums.push_back(1);
@@ -72,9 +72,9 @@ ISETree::ISETree() : mTreeLevel(1) {
 }
 
 
-ISETree::~ISETree() {
+ASETree::~ASETree() {
   if (mRoot == nullptr) return;
-  ISETreeNodeTraverseQueue tnq;
+  ASETreeNodeTraverseQueue tnq;
   tnq.push(mRoot);
   while (!tnq.empty()) {
     auto frontNode = tnq.front();
@@ -91,17 +91,17 @@ ISETree::~ISETree() {
   }
 }
 
-ISEDescriptor ISETree::GetDescriptorFromTree() {
-  if (mTreeLevel < 0) return ISEFeature({});
+ASEDescriptor ASETree::GetDescriptorFromTree() {
+  if (mTreeLevel < 0) return ASEFeature({});
   return GetDescriptorFromTree(mTreeLevel - 1);
 }
 
-ISEDescriptor ISETree::GetDescriptorFromTree(int level) {
+ASEDescriptor ASETree::GetDescriptorFromTree(int level) {
   if (level < 0 || level >= mTreeLevel) {
     return GetDescriptorFromTree();
   }
-  ISEDescriptor result(mLevelNums[level]);
-  ISETreeNodePtr nodePtr = mHeads[level];
+  ASEDescriptor result(mLevelNums[level]);
+  ASETreeNodePtr nodePtr = mHeads[level];
   int count = 0;
   while (nodePtr != nullptr) {
     result[count] = nodePtr->GetWeight();
@@ -111,22 +111,22 @@ ISEDescriptor ISETree::GetDescriptorFromTree(int level) {
   return result;
 }
 
-int ISETree::GetDescriptorSize(int level) {
+int ASETree::GetDescriptorSize(int level) {
   if (level >= 0 && level < mLevelNums.size()) {
     return mLevelNums[level];
   }
   return 0;
 }
 
-void ISETree::AddTreeLevel(ISEGMMClusters& clusters) {
+void ASETree::AddTreeLevel(ASEGMMClusters& clusters) {
   auto nodePtr = mHeads[mHeads.size() - 1];
-  ISETreeNodePtr newHead = nullptr;
-  ISETreeNodePtr nodeTail = nullptr;
+  ASETreeNodePtr newHead = nullptr;
+  ASETreeNodePtr nodeTail = nullptr;
   int clusterNum = clusters.mClustersNum;
   while (nodePtr != nullptr) {
     for (auto i = 0; i < clusters.mClustersNum; i++) {
-      auto treeNode = new ISETreeNode(nodePtr->GetLevel() + 1, i, clusterNum, ISETreeNodeType::ISE_TREENODE_TYPE_CLUSTER);
-      treeNode->SetData(ISETreeNodeData(clusters.mFeatureDimension, clusters.mWeightClutser[i], clusters.mMeanClusters[i], clusters.mCovClusters[i]));
+      auto treeNode = new ASETreeNode(nodePtr->GetLevel() + 1, i, clusterNum, ASETreeNodeType::ASE_TREENODE_TYPE_CLUSTER);
+      treeNode->SetData(ASETreeNodeData(clusters.mFeatureDimension, clusters.mWeightClutser[i], clusters.mMeanClusters[i], clusters.mCovClusters[i]));
       if (newHead == nullptr) newHead = treeNode;
       if (nodeTail != nullptr) nodeTail->SetNext(treeNode);
       nodePtr->AddChildren(treeNode);
@@ -142,7 +142,7 @@ void ISETree::AddTreeLevel(ISEGMMClusters& clusters) {
   mTreeLevel++;
 }
 
-void ISETree::UpdateTreeNodeWeightsByPruningNodeWithDeep(ISETreeNodePtr node, ISETreeNodeWeights& weights, int featureNumber) {
+void ASETree::UpdateTreeNodeWeightsByPruningNodeWithDeep(ASETreeNodePtr node, ASETreeNodeWeights& weights, int featureNumber) {
   if (node == nullptr) return;
   double weight = 1;
   if (node->GetParent() != nullptr) {
@@ -159,8 +159,8 @@ void ISETree::UpdateTreeNodeWeightsByPruningNodeWithDeep(ISETreeNodePtr node, IS
   }
 }
 
-void ISETree::UpdateTreeNodeWeightsByPruningNodeWithLevel(ISETreeNodeWeights& weights, int featureNumber) {
-  ISETreeNodeTraverseQueue treeNodeQueue;
+void ASETree::UpdateTreeNodeWeightsByPruningNodeWithLevel(ASETreeNodeWeights& weights, int featureNumber) {
+  ASETreeNodeTraverseQueue treeNodeQueue;
   treeNodeQueue.push(mRoot);
   while (!treeNodeQueue.empty()) {
     auto node = treeNodeQueue.front();
@@ -180,8 +180,8 @@ void ISETree::UpdateTreeNodeWeightsByPruningNodeWithLevel(ISETreeNodeWeights& we
   }
 }
 
-void ISETree::UpdateTreeNodeThreadWeightsByPruningNodeWithLevel(int threadID, ISETreeNodeWeights& weights, int featureNumber) {
-  ISETreeNodeTraverseQueue treeNodeQueue;
+void ASETree::UpdateTreeNodeThreadWeightsByPruningNodeWithLevel(int threadID, ASETreeNodeWeights& weights, int featureNumber) {
+  ASETreeNodeTraverseQueue treeNodeQueue;
   treeNodeQueue.push(mRoot);
   while (!treeNodeQueue.empty()) {
     auto node = treeNodeQueue.front();
@@ -201,7 +201,7 @@ void ISETree::UpdateTreeNodeThreadWeightsByPruningNodeWithLevel(int threadID, IS
   }
 }
 
-void ISETree::UpdateTreeNodeWeightsStrictly(ISETreeNodeWeights& weights, int featureNumber) {
+void ASETree::UpdateTreeNodeWeightsStrictly(ASETreeNodeWeights& weights, int featureNumber) {
   for (auto i = 1; i < mHeads.size(); i++) {
     auto nodePtr = mHeads[i];
     while(nodePtr != nullptr) {
@@ -213,7 +213,7 @@ void ISETree::UpdateTreeNodeWeightsStrictly(ISETreeNodeWeights& weights, int fea
   }
 }
 
-void ISETree::UpdateTreeNodeThreadWeightsStrictly(int threadID, ISETreeNodeWeights& weights, int featureNumber) {
+void ASETree::UpdateTreeNodeThreadWeightsStrictly(int threadID, ASETreeNodeWeights& weights, int featureNumber) {
   for (auto i = 1; i < mHeads.size(); i++) {
     auto nodePtr = mHeads[i];
     while(nodePtr != nullptr) {
@@ -225,16 +225,16 @@ void ISETree::UpdateTreeNodeThreadWeightsStrictly(int threadID, ISETreeNodeWeigh
   }
 }
 
-void ISETree::GetWeightsFromOneFeature(ISEFeature& feature, ISETreeNodeWeights& weights, ISETreeNodeWeightKernelCallback kernelCallback) {
+void ASETree::GetWeightsFromOneFeature(ASEFeature& feature, ASETreeNodeWeights& weights, ASETreeNodeWeightKernelCallback kernelCallback) {
   int featureStart = 0;
   int featureEnd = -1;
   int j = 0;
-  weights.push_back(ISETreeNodeLevelHeadWeights(1, 1));
+  weights.push_back(ASETreeNodeLevelHeadWeights(1, 1));
   while (featureStart < feature.size()){
     auto nodePtr = mHeads[j + 1];
     featureEnd = featureStart + nodePtr->GetData().mDimension;
-    ISETreeNodeLevelHeadWeights lhWeights(mLevelSubNums[j + 1], 0);
-    ISEFeatureSegment fsegment(feature.begin() + featureStart, feature.begin() + featureEnd);
+    ASETreeNodeLevelHeadWeights lhWeights(mLevelSubNums[j + 1], 0);
+    ASEFeatureSegment fsegment(feature.begin() + featureStart, feature.begin() + featureEnd);
     int count = 0;
     double sumWeights = 0;
     while (nodePtr != nullptr) {
@@ -245,7 +245,7 @@ void ISETree::GetWeightsFromOneFeature(ISEFeature& feature, ISETreeNodeWeights& 
       if (count >= mLevelSubNums[j + 1]) break;
     }
     for (auto k = 0; k < lhWeights.size(); k++) {
-      lhWeights[k] = lhWeights[k] / (sumWeights + ISE_MIN_DOUBLE);
+      lhWeights[k] = lhWeights[k] / (sumWeights + ASE_MIN_DOUBLE);
     }
     weights.push_back(lhWeights);
     featureStart = featureEnd;
@@ -253,9 +253,9 @@ void ISETree::GetWeightsFromOneFeature(ISEFeature& feature, ISETreeNodeWeights& 
   }
 }
 
-void ISETree::UpdateTreeNodeWeightsInOneThreadKernel(int threadID, ISEFeatureSet& normFeatures, int start, int end, ISETreeNodeWeightKernelCallback kernelCallback) {
+void ASETree::UpdateTreeNodeWeightsInOneThreadKernel(int threadID, ASEFeatureSet& normFeatures, int start, int end, ASETreeNodeWeightKernelCallback kernelCallback) {
   for (auto i = start; i < end; i++) {
-      ISETreeNodeWeights encodingWeights;
+      ASETreeNodeWeights encodingWeights;
       GetWeightsFromOneFeature(normFeatures[i], encodingWeights, kernelCallback);
       if (!mNeedPurning) {
         UpdateTreeNodeThreadWeightsStrictly(threadID, encodingWeights, normFeatures.size());
@@ -265,7 +265,7 @@ void ISETree::UpdateTreeNodeWeightsInOneThreadKernel(int threadID, ISEFeatureSet
   }
 }
 
-void ISETree::ReserveSpaceForMultiThread(int threads) {
+void ASETree::ReserveSpaceForMultiThread(int threads) {
   for (auto i = 0; i < mHeads.size(); i++) {
     auto nodePtr = mHeads[i];
     while(nodePtr != nullptr) {
@@ -275,14 +275,14 @@ void ISETree::ReserveSpaceForMultiThread(int threads) {
   }
 }
 
-void ISETree::UpdateTreeNodeWeights(ISEFeatureSet& normFeatures, ISETreeNodeWeightKernelCallback kernelCallback) {
+void ASETree::UpdateTreeNodeWeights(ASEFeatureSet& normFeatures, ASETreeNodeWeightKernelCallback kernelCallback) {
   if (normFeatures.size() == 0) {
     cout << "UpdateTreeNodeWeights: the features is empty!" << endl;
     return;
   }
 
   for (auto i = 0; i < normFeatures.size(); i++) {
-      ISETreeNodeWeights encodingWeights;
+      ASETreeNodeWeights encodingWeights;
       GetWeightsFromOneFeature(normFeatures[i], encodingWeights, kernelCallback);
 
       if (!mNeedPurning) {
@@ -295,20 +295,20 @@ void ISETree::UpdateTreeNodeWeights(ISEFeatureSet& normFeatures, ISETreeNodeWeig
   }
 }
 
-void ISETree::UpdateTreeNodeWeightsWithMultiThreads(ISEFeatureSet& normFeatures, ISETreeNodeWeightKernelCallback kernelCallback) {
+void ASETree::UpdateTreeNodeWeightsWithMultiThreads(ASEFeatureSet& normFeatures, ASETreeNodeWeightKernelCallback kernelCallback) {
   if (normFeatures.size() == 0) {
     cout << "UpdateTreeNodeWeights: the features is empty!" << endl;
     return;
   }
 
-  ISEThreadPoolPTR threadPool = ISEThreadPool::GetInstance();
+  ASEThreadPoolPTR threadPool = ASEThreadPool::GetInstance();
 
-  ISEThreadReturnVector threadReturn;
+  ASEThreadReturnVector threadReturn;
   for (auto i = 0; i < threadPool->GetWorkerSize(); i++) {
     int start = i * normFeatures.size() / threadPool->GetWorkerSize();
     int end = (i + 1) * normFeatures.size() / threadPool->GetWorkerSize();
     if (i + 1 == threadPool->GetWorkerSize()) end = normFeatures.size();
-    threadReturn.emplace_back(threadPool->Enqueue(&ISETree::UpdateTreeNodeWeightsInOneThreadKernel, this, i, ISE_REF(normFeatures), start, end, kernelCallback));
+    threadReturn.emplace_back(threadPool->Enqueue(&ASETree::UpdateTreeNodeWeightsInOneThreadKernel, this, i, ASE_REF(normFeatures), start, end, kernelCallback));
   }
   for (auto& t: threadReturn) {
     t.get();
@@ -321,10 +321,10 @@ void ISETree::UpdateTreeNodeWeightsWithMultiThreads(ISEFeatureSet& normFeatures,
       nodePtr = nodePtr->GetNext();
     }
   }
-  
+
 }
 
-void ISETree::ResetWeightsOfTree() {
+void ASETree::ResetWeightsOfTree() {
   for (auto i = 1; i < mHeads.size(); i++) {
     auto nodePtr = mHeads[i];
     while (nodePtr != nullptr) {
@@ -335,4 +335,4 @@ void ISETree::ResetWeightsOfTree() {
   }
 }
 
-ISE_NAMESPACE_END
+ASE_NAMESPACE_END

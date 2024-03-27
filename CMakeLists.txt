@@ -16,10 +16,10 @@ include_directories(${PROJECT_SOURCE_DIR}/thirdparty/GMM/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/ThreadPool/include)
 
 add_library( ase SHARED
-   ./src/ISEPrepocessor.cpp
-   ./src/ISEUtils.cpp
-   ./src/ISETree.cpp
-   ./src/ISEEncoder.cpp
+   ./src/ASEPrepocessor.cpp
+   ./src/ASEUtils.cpp
+   ./src/ASETree.cpp
+   ./src/ASEEncoder.cpp
 )
 
 # find_library( ase
